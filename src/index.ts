@@ -47,17 +47,27 @@ export class PeaqApp extends BaseApp {
     this.eth = new Eth(transport, ethScrambleKey, ethLoadConfig);
   }
 
-  async getAddress(path: BIP32Path, showAddrInDevice = false): Promise<GenericeResponseAddress> {
+  async getAddress(
+    path: BIP32Path,
+    showAddrInDevice = false,
+    boolChaincode?: boolean,
+  ): Promise<GenericeResponseAddress> {
     const bip44PathBuffer = this.serializePath(path);
 
     const p1 = showAddrInDevice ? P1_VALUES.SHOW_ADDRESS_IN_DEVICE : P1_VALUES.ONLY_RETRIEVE;
 
     try {
-      const responseBuffer = await this.transport.send(this.CLA, this.INS.GET_ADDR, p1, 0, bip44PathBuffer);
+      const responseBuffer = await this.transport.send(
+        this.CLA,
+        this.INS.GET_ADDR,
+        p1,
+        boolChaincode ? 0x01 : 0x00,
+        bip44PathBuffer,
+      );
 
       const response = processResponse(responseBuffer);
 
-      const pubKey = response.readBytes(32).toString("hex");
+      const pubKey = response.readBytes(65).toString("hex");
       const address = response.readBytes(response.length()).toString("ascii");
 
       return {
@@ -108,7 +118,10 @@ export class PeaqApp extends BaseApp {
       }
 
       return {
-        signature: result.readBytes(result.length()),
+        sign_type: result.readBytes(1),
+        r: result.readBytes(32),
+        s: result.readBytes(32),
+        v: result.readBytes(1),
         return_code: 0x9000,
         error_message: "No errors",
       };

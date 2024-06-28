@@ -17,5 +17,8 @@ export interface GenericeResponseAddress extends ResponseBase {
 }
 
 export interface GenericResponseSign extends ResponseBase {
-  signature: Buffer;
+  sign_type: Buffer;
+  r: Buffer;
+  s: Buffer;
+  v: Buffer;
 }

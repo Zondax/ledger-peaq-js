@@ -72,4 +72,8 @@ export class PeaqApp extends BaseApp {
   }> {
     return this.eth.getAddress(path, boolDisplay, boolChaincode);
   }
+
+  async signPersonalMessage(path: string, messageHex: string): Promise<{ v: number; s: string; r: string }> {
+    return this.eth.signPersonalMessage(path, messageHex);
+  }
 }

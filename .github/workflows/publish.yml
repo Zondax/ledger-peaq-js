@@ -22,16 +22,17 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
       - name: Install node
         uses: actions/setup-node@v4
         with:
           registry-url: "https://registry.npmjs.org"
           scope: "@zondax"
+          cache: 'pnpm'
       - run: mv README-npm.md README.md
-      - name: Install yarn
-        run: npm install -g yarn
-      - run: yarn install
-      - run: yarn build
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
       - name: Get latest release version number
         id: get_version
         uses: battila7/get-version-action@v2

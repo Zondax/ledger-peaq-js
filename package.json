@@ -6,7 +6,7 @@
   "types": "./dist/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zondax/ledger-peaq-js.git"
+    "url": "git+https://github.com/Zondax/ledger-peaq-js.git"
   },
   "keywords": [
     "Ledger",
@@ -16,9 +16,9 @@
   "author": "Zondax GmbH",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/zondax/ledger-peaq-js/issues"
+    "url": "https://github.com/Zondax/ledger-peaq-js/issues"
   },
-  "homepage": "https://github.com/zondax/ledger-peaq-js",
+  "homepage": "https://github.com/Zondax/ledger-peaq-js",
   "dependencies": {
     "@ledgerhq/hw-app-eth": "^6.46.1",
     "@zondax/ledger-js": "^1.3.1",

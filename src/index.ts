@@ -13,9 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  ******************************************************************************* */
-import type Transport from "@ledgerhq/hw-transport";
 import Eth from "@ledgerhq/hw-app-eth";
-import BaseApp, { BIP32Path, INSGeneric, processErrorResponse, processResponse } from "@zondax/ledger-js";
+import BaseApp, {
+  BIP32Path,
+  INSGeneric,
+  type LedgerTransport,
+  processErrorResponse,
+  processResponse,
+} from "@zondax/ledger-js";
 import { LedgerEthTransactionResolution, LoadConfig } from "@ledgerhq/hw-app-eth/lib/services/types";
 
 import { ResponseAddress } from "./types";
@@ -40,13 +45,18 @@ export class PeaqApp extends BaseApp {
     requiredPathLengths: [5],
   };
 
-  constructor(transport: Transport, ethScrambleKey = "w0w", ethLoadConfig: LoadConfig = {}) {
+  constructor(transport: LedgerTransport, ethScrambleKey = "w0w", ethLoadConfig: LoadConfig = {}) {
     super(transport, PeaqApp._params);
     if (!this.transport) {
       throw new Error("Transport has not been defined");
     }
 
-    this.eth = new Eth(transport, ethScrambleKey, ethLoadConfig);
+    // hw-app-eth's constructor demands the nominal `Transport` class, which the
+    // structural LedgerTransport deliberately is not. The cast is the type system failing
+    // to express "either transport" -- at runtime Eth only needs `send` plus
+    // `decorateAppAPIMethods`, and DMKTransport implements both. Flare casts here for the
+    // same reason.
+    this.eth = new Eth(transport as any, ethScrambleKey, ethLoadConfig);
   }
 
   async signEVMTransaction(

@@ -28,6 +28,16 @@ import { P1_VALUES, PUBKEYLEN } from "./consts";
 
 import { ResponseSign } from "./types";
 
+/**
+ * What this SDK needs from a transport. `BaseApp` needs only `send`; `@ledgerhq/hw-app-eth`,
+ * which PeaqApp builds in its constructor, additionally calls `decorateAppAPIMethods` to
+ * install an app-level lock -- so a send-only object would typecheck and then throw. A
+ * hw-transport `Transport` has both, and so does a DMK-backed transport.
+ */
+export interface EvmTransport extends LedgerTransport {
+  decorateAppAPIMethods(self: any, methods: string[], scrambleKey: string): void;
+}
+
 export class PeaqApp extends BaseApp {
   private eth;
 
@@ -45,7 +55,7 @@ export class PeaqApp extends BaseApp {
     requiredPathLengths: [5],
   };
 
-  constructor(transport: LedgerTransport, ethScrambleKey = "w0w", ethLoadConfig: LoadConfig = {}) {
+  constructor(transport: EvmTransport, ethScrambleKey = "w0w", ethLoadConfig: LoadConfig = {}) {
     super(transport, PeaqApp._params);
     if (!this.transport) {
       throw new Error("Transport has not been defined");

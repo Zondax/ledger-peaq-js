@@ -25,7 +25,6 @@
     "varint": "^6.0.0"
   },
   "devDependencies": {
-    "@ledgerhq/hw-transport": "^6.31.12",
     "@ledgerhq/logs": "^6.13.0",
     "@types/node": "^24.9.1",
     "@types/varint": "^6.0.3",

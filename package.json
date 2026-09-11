@@ -20,12 +20,15 @@
   },
   "homepage": "https://github.com/Zondax/ledger-peaq-js",
   "dependencies": {
-    "@ledgerhq/hw-app-eth": "^6.46.1",
+    "@ledgerhq/context-module": "2.5.0",
+    "@ledgerhq/device-signer-kit-ethereum": "1.18.0",
     "@zondax/ledger-js": "github:Zondax/ledger-js#feat/dmk-transport",
     "varint": "^6.0.0"
   },
   "devDependencies": {
+    "@ledgerhq/device-management-kit": "1.9.0",
     "@ledgerhq/logs": "^6.13.0",
+    "@types/jest": "30.0.0",
     "@types/node": "^24.9.1",
     "@types/varint": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
@@ -36,22 +39,29 @@
     "eslint-plugin-n": "^17.23.1",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-promise": "^7.2.1",
-    "eslint-plugin-unused-imports": "^4.3.0",
     "eslint-plugin-tsdoc": "^0.4.0",
+    "eslint-plugin-unused-imports": "^4.3.0",
     "index.js": "^0.0.3",
     "jest": "^30.2.0",
     "prettier": "^3.6.2",
+    "rxjs": "7.8.2",
     "secp256k1": "^5.0.1",
+    "ts-jest": "29.4.12",
     "typescript": "5.9.3"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc -p tsconfig.build.json",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "pnpm build && jest"
   },
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "pnpm@10.15.1"
+  "packageManager": "pnpm@10.15.1",
+  "peerDependencies": {
+    "@ledgerhq/device-management-kit": "^1.9.0",
+    "rxjs": "7.8.2"
+  }
 }

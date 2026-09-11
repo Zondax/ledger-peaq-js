@@ -16,14 +16,19 @@ Use `yarn install` to avoid issues.
 
 # Available commands
 
-| Operation          | Response                    | Command                     |
-| ------------------ | --------------------------- | --------------------------- |
-| getVersion         | app version                 | ---------------             |
-| appInfo            | name, version, flags, etc   | ---------------             |
-| deviceInfo         | fw and mcu version, id, etc | Only available in dashboard |
-| signRawBytes       | signed message              | path + message              |
-| signETHTransaction | signed message              | path + message              |
-| getETHAddress      | pubkey + address            | path                        |
+| Operation           | Response                    | Command                     |
+| ------------------- | --------------------------- | --------------------------- |
+| getVersion          | app version                 | ---------------             |
+| appInfo             | name, version, flags, etc   | ---------------             |
+| deviceInfo          | fw and mcu version, id, etc | Only available in dashboard |
+| signRawBytes        | signed message              | path + message              |
+| signETHTransaction  | signed message              | path + message              |
+| getETHAddress       | pubkey + address            | path                        |
+| signPersonalMessage | signed message              | path + message              |
+
+The EVM methods are driven by Ledger's Device Management Kit Ethereum signer: construct the app as
+`new PeaqApp(transport, { dmk, sessionId })`, passing the DMK session behind the transport. The other
+methods only need the transport.
 
 # Testing with real devices
 

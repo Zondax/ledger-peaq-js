@@ -35,9 +35,16 @@ beforeEach(() => {
 });
 
 describe("PeaqApp EVM methods through the DMK signer", () => {
-  it("refuses EVM calls without a DMK session, before touching the device", async () => {
-    const app = new PeaqApp(transport);
-    await expect(app.getETHAddress(PATH)).rejects.toThrow("construct PeaqApp with { dmk, sessionId }");
+  // The session is required in the type, so this only guards JavaScript callers — but it is
+  // the difference between failing on construction and failing on the first signing attempt.
+  it.each([
+    ["nothing", undefined],
+    ["no dmk", { sessionId: "session-1" }],
+    ["no sessionId", { dmk: {} }],
+  ])("refuses to construct with %s, before touching the device", (_case, bad) => {
+    expect(() => new PeaqApp(transport, bad as unknown as EvmSignerOptions)).toThrow(
+      "EVM signing needs a Device Management Kit session",
+    );
     expect(SignerEthBuilder).not.toHaveBeenCalled();
     expect(transport.send).not.toHaveBeenCalled();
   });

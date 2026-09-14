@@ -35,7 +35,7 @@ import {
 export { DeviceActionError } from "./evm";
 
 export class PeaqApp extends BaseApp {
-  private readonly evm: EvmSignerOptions | undefined;
+  private readonly evm: EvmSignerOptions;
   private signer: SignerEth | undefined;
 
   static _INS = {
@@ -53,13 +53,21 @@ export class PeaqApp extends BaseApp {
   };
 
   /**
+   * Every peaq-specific method is an EVM method, so the DMK session is required — unlike the
+   * apps that also expose a native chain, where it is optional.
+   *
    * @param transport - anything that can send an APDU (`DMKTransport`, or a legacy hw-transport)
-   * @param evm - the DMK session behind that transport; needed only for the EVM methods
+   * @param evm - the DMK session behind that transport
    */
-  constructor(transport: LedgerTransport, evm?: EvmSignerOptions) {
+  constructor(transport: LedgerTransport, evm: EvmSignerOptions) {
     super(transport, PeaqApp._params);
     if (!this.transport) {
       throw new Error("Transport has not been defined");
+    }
+    // Required in the type, but checked here so JavaScript callers fail on construction
+    // rather than on their first signing attempt.
+    if (evm?.dmk == null || evm.sessionId == null) {
+      throw new Error("EVM signing needs a Device Management Kit session: pass { dmk, sessionId }");
     }
     this.evm = evm;
   }
@@ -71,14 +79,9 @@ export class PeaqApp extends BaseApp {
   // `@ledgerhq/hw-app-eth` (deprecated, removed September 2026).
   // ---------------------------------------------------------------------------
 
-  /** The Ethereum signer, built on first use so that non-EVM callers never need a DMK session. */
+  /** The Ethereum signer, built on first use and reused for the life of the app. */
   private get ethSigner(): SignerEth {
     if (this.signer === undefined) {
-      if (this.evm === undefined) {
-        throw new Error(
-          "EVM signing needs a Device Management Kit session: construct PeaqApp with { dmk, sessionId }",
-        );
-      }
       const { dmk, sessionId, originToken, contextModule } = this.evm;
       const builder = new SignerEthBuilder({
         dmk,

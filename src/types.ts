@@ -23,7 +23,10 @@ export interface ResponseSign {
  * `signEVMTransaction`, `getETHAddress` and `signPersonalMessage` go through the Device
  * Management Kit's Ethereum signer, which drives the device from a DMK session rather than
  * through `send`. Pass the same `dmk` and `sessionId` that back the `DMKTransport` given to
- * the constructor. Callers who never touch the EVM methods can leave this out.
+ * the constructor.
+ *
+ * Every peaq method is an EVM method, so this is required — there is nothing the app can do
+ * without it. The SDKs that also expose a native chain take it as optional instead.
  */
 export interface EvmSignerOptions {
   dmk: DeviceManagementKit;

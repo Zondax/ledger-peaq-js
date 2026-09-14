@@ -14,16 +14,9 @@
  *  limitations under the License.
  ******************************************************************************* */
 import { SignerEthBuilder, type SignerEth } from "@ledgerhq/device-signer-kit-ethereum";
-import BaseApp, {
-  BIP32Path,
-  INSGeneric,
-  type LedgerTransport,
-  processErrorResponse,
-  processResponse,
-} from "@zondax/ledger-js";
+import BaseApp, { INSGeneric, type LedgerTransport } from "@zondax/ledger-js";
 
-import { EvmSignerOptions, ResponseAddress, ResponseSign } from "./types";
-import { P1_VALUES, PUBKEYLEN } from "./consts";
+import { EvmSignerOptions } from "./types";
 import {
   evmDerivationPath,
   hexToBytes,
@@ -32,6 +25,7 @@ import {
   toEvmTransactionSignature,
 } from "./evm";
 
+export * from "./types";
 export { DeviceActionError } from "./evm";
 
 export class PeaqApp extends BaseApp {

@@ -14,16 +14,43 @@ We recommend using the npmjs package in order to receive updates/fixes.
 
 Use `yarn install` to avoid issues.
 
+# Usage
+
+Every peaq method is an EVM method, driven by Ledger's
+[Device Management Kit](https://developers.ledger.com/docs/device-interaction/getting-started) Ethereum
+signer, so `PeaqApp` requires the DMK session behind the transport as its second argument:
+
+```ts
+import { DeviceManagementKitBuilder } from "@ledgerhq/device-management-kit";
+import { DMKTransport } from "@zondax/ledger-js";
+import { PeaqApp } from "@zondax/ledger-peaq";
+
+const dmk = new DeviceManagementKitBuilder().addTransport(/* web-hid, node-hid... */).build();
+const sessionId = await dmk.connect({
+  device,
+  sessionRefresherOptions: { isRefresherDisabled: true },
+});
+
+const app = new PeaqApp(new DMKTransport(dmk, sessionId), { dmk, sessionId });
+
+await app.getETHAddress("m/44'/60'/0'/0/0");
+await app.signEVMTransaction("m/44'/60'/0'/0/0", rawTxHex);
+```
+
+Any object with a hw-transport-style `send(cla, ins, p1, p2, data?, statusList?)` still works as the
+first argument, but the deprecated `@ledgerhq/hw-transport` packages stop working against Ledger's
+services in September 2026.
+
 # Available commands
 
-| Operation          | Response                    | Command                     |
-| ------------------ | --------------------------- | --------------------------- |
-| getVersion         | app version                 | ---------------             |
-| appInfo            | name, version, flags, etc   | ---------------             |
-| deviceInfo         | fw and mcu version, id, etc | Only available in dashboard |
-| signRawBytes       | signed message              | path + message              |
-| signETHTransaction | signed message              | path + message              |
-| getETHAddress      | pubkey + address            | path                        |
+| Operation           | Response                    | Command                     |
+| ------------------- | --------------------------- | --------------------------- |
+| getVersion          | app version                 | ---------------             |
+| appInfo             | name, version, flags, etc   | ---------------             |
+| deviceInfo          | fw and mcu version, id, etc | Only available in dashboard |
+| signEVMTransaction  | signed message              | path + raw tx hex           |
+| getETHAddress       | pubkey + address            | path                        |
+| signPersonalMessage | signed message              | path + message              |
 
 # Testing with real devices
 
